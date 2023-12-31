@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal value;
@@ -52,6 +52,10 @@ public class Payment {
 
     public void setPaymentCreated() {
         this.status = Status.CREATED;
+    }
+
+    public void setPaymentConfirmed() {
+        this.status = Status.CONFIRMED;
     }
 
     public void setId(Long id) {
