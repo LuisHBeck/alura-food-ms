@@ -6,6 +6,7 @@ import br.com.alurafood.payments.service.PaymentService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,11 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @GetMapping("/port")
+    public String informApplicationInstancePort(@Value("${local.server.port}") String applicationPort) {
+        return String.format("Requested on port: %s", applicationPort);
+    }
 
     @GetMapping
     public ResponseEntity<Page<PaymentDetailingDto>> listPayments(@PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
