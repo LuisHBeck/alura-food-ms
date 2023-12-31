@@ -2,6 +2,7 @@ package br.com.alurafood.payments.service;
 
 import br.com.alurafood.payments.dto.PaymentDetailingDto;
 import br.com.alurafood.payments.dto.PaymentRequestDto;
+import br.com.alurafood.payments.http.client.OrderClient;
 import br.com.alurafood.payments.model.Payment;
 import br.com.alurafood.payments.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,9 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private OrderClient orderClient;
 
     public Page<PaymentDetailingDto> getAllPayments(Pageable pageable) {
         return paymentRepository.findAll(pageable).map(PaymentDetailingDto::new);
@@ -46,5 +50,12 @@ public class PaymentService {
     @Transactional
     public void deletePayment(Long id) {
         paymentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void confirmPayment(Long id) {
+        var payment = paymentRepository.getReferenceById(id);
+        payment.setPaymentConfirmed();
+        orderClient.updatePayment(id);
     }
 }
