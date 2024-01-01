@@ -58,4 +58,11 @@ public class PaymentService {
         payment.setPaymentConfirmed();
         orderClient.updatePayment(id);
     }
+
+    @Transactional
+    public void confirmPaymentFallback(Long id) {
+        var payment = paymentRepository.getReferenceById(id);
+//        payment.setPaymentConfirmedWithoutIntegration();
+        System.out.println("testesssssss");
+    }
 }

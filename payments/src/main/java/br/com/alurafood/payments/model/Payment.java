@@ -58,6 +58,10 @@ public class Payment {
         this.status = Status.CONFIRMED;
     }
 
+    public void setPaymentConfirmedWithoutIntegration() {
+        this.status = Status.CONFIRMED_W_INTEGRATION;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
