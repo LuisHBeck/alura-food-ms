@@ -58,8 +58,8 @@ public class Payment {
         this.status = Status.CONFIRMED;
     }
 
-    public void setPaymentConfirmedWithoutIntegration() {
-        this.status = Status.CONFIRMED_W_INTEGRATION;
+    public void setPaymentConfirmedWithPendingIntegration() {
+        this.status = Status.CONFIRMED_WITH_PENDING_INTEGRATION;
     }
 
     public void setId(Long id) {
