@@ -20,6 +20,9 @@ public class PaymentService {
     @Autowired
     private OrderClient orderClient;
 
+    @Autowired
+    private MessengerService messengerService;
+
     public Page<PaymentDetailingDto> getAllPayments(Pageable pageable) {
         return paymentRepository.findAll(pageable).map(PaymentDetailingDto::new);
     }
@@ -35,6 +38,8 @@ public class PaymentService {
         payment.setPaymentCreated();
 
         paymentRepository.save(payment);
+
+        messengerService.publishCreatedPaymentMessage(payment);
 
         return new PaymentDetailingDto(payment);
     }
