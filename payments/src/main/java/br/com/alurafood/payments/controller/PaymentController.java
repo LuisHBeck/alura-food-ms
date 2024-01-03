@@ -6,8 +6,6 @@ import br.com.alurafood.payments.service.PaymentService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,9 +21,6 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     @GetMapping("/port")
     public String informApplicationInstancePort(@Value("${local.server.port}") String applicationPort) {
@@ -49,10 +44,6 @@ public class PaymentController {
     public ResponseEntity createPayment(@RequestBody @Valid PaymentRequestDto paymentData, UriComponentsBuilder uriBuilder) {
         var payment = paymentService.createPayment(paymentData);
         var uri = uriBuilder.path("api/v1/payments/{id}").build(payment.id());
-
-        var message = new Message((String.format("Payment created with id %s", payment.id())).getBytes());
-        rabbitTemplate.send("payment.finished", message);
-
         return ResponseEntity.created(uri).body(payment);
     }
 
