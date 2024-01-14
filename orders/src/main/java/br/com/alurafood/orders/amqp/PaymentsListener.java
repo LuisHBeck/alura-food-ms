@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentsListener {
 
-    @RabbitListener(queues = "payment.finished")
+//    @RabbitListener(queues = "payment.finished") payment queue
+    @RabbitListener(queues = "payments.order-detail") // order create the payment queue binded to the exchange
     public void receiveMessage(PaymentDto payment) {
         String message = String.format("""
                 Payment data: %s

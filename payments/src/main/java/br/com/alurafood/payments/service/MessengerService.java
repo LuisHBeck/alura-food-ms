@@ -17,6 +17,6 @@ public class MessengerService {
         var message = new Message((String.format("Payment created with id %s", payment.getId()).getBytes()));
 
         var paymentDto = new PaymentDetailingDto(payment);
-        rabbitTemplate.convertAndSend("payment.finished", payment);
+        rabbitTemplate.convertAndSend("payments.exchange","", payment);
     }
 }
