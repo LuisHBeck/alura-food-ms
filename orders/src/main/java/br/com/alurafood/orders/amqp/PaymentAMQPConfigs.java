@@ -32,13 +32,35 @@ public class PaymentAMQPConfigs {
     // create a queue to receive payments messages
     @Bean
     public Queue orderDetailQueue() {
-        return QueueBuilder.nonDurable("payments.order-detail").build();
+        return QueueBuilder.nonDurable("payments.order-detail")
+                .deadLetterExchange("payments.dlx")
+                .build();
     }
 
     // binding the queue to the exchange, for the queue register the exchanges receive messages
     @Bean
-    public Binding bindingOrderPayment(FanoutExchange fanoutExchange) {
-        return BindingBuilder.bind(orderDetailQueue()).to(fanoutExchange);
+    public Binding bindingOrderPayment() {
+        return BindingBuilder.bind(orderDetailQueue()).to(fanoutExchange());
+    }
+
+    // create new exchange for payments DLQ (DEAD LETTERS QUEUE)
+    @Bean
+    public FanoutExchange deadLetterExchange() {
+        return new FanoutExchange("payments.dlx");
+    }
+
+    // create a queue to receive dead letters from "payment.order-detail" queue
+    // dlq = DEAD LETTER QUEUE
+    @Bean
+    public Queue orderDetailDLQ() {
+        return QueueBuilder.nonDurable("payments.order-detail-dlq").build();
+    }
+
+    // binding the dlq to the exchange
+    // dlx = DEAD LETTER EXCHANGE
+    @Bean
+    public Binding bindingOrderPaymentDLX() {
+        return BindingBuilder.bind(orderDetailDLQ()).to(deadLetterExchange());
     }
 
     @Bean
