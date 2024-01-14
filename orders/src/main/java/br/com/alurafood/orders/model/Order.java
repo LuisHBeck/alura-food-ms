@@ -26,7 +26,7 @@ public class Order {
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private OrderStatus status;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
     @JsonManagedReference
@@ -46,18 +46,18 @@ public class Order {
     }
 
     public void setRequested() {
-        this.status = Status.REQUESTED;
+        this.status = OrderStatus.REQUESTED;
     }
 
     public void setDate() {
         this.date = LocalDateTime.now();
     }
 
-    public void updateStatus(Status status) {
+    public void updateStatus(OrderStatus status) {
         this.status = status;
     }
 
     public void approvePayment() {
-        this.status = Status.PAID;
+        this.status = OrderStatus.PAID;
     }
 }
