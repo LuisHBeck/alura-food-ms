@@ -1,20 +1,80 @@
 version: "3.9"
 
 services:
-  rabbitmq:
+  rabbitmq1:
     image: rabbitmq:3.12-management
-    container_name: rabbitmq
-    restart: always
+    container_name: rabbitmq1
+    hostname: rabbitmq1
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
       - rabbitmq-volume:/var/lib/rabbitmq
     environment:
+      - RABBITMQ_ERLANG_COOKIE=secret_k_k
       - RABBITMQ_DEFAULT_USER=beck
       - RABBITMQ_DEFAULT_PASS=beck-ms
+      - CLUSTERED=true
     networks:
       - alura-food-network
+
+  rabbitmq2:
+    depends_on:
+      - rabbitmq1
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq2
+    hostname: rabbitmq2
+    ports:
+      - 5673:5672
+      - 15673:15672
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=secret_k_k
+      - RABBITMQ_DEFAULT_USER=beck
+      - RABBITMQ_DEFAULT_PASS=beck-ms
+      - CLUSTERED=true
+    networks:
+      - alura-food-network
+    links:
+      - rabbitmq1:rabbitmq1
+
+  rabbitmq3:
+    depends_on:
+      - rabbitmq1
+      - rabbitmq2
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq3
+    hostname: rabbitmq3
+    ports:
+      - 5674:5672
+      - 15674:15672
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=secret_k_k
+      - RABBITMQ_DEFAULT_USER=beck
+      - RABBITMQ_DEFAULT_PASS=beck-ms
+      - CLUSTERED=true
+    networks:
+      - alura-food-network
+    links:
+      - rabbitmq1:rabbitmq1
+      - rabbitmq2:rabbitmq2
+
+  haproxy:
+    image: haproxy:1.6
+    container_name: haproxy
+    hostname: haproxy
+    ports:
+      - 5675:5672
+      - 20000:20000
+    networks:
+      - alura-food-network
+    links:
+      - rabbitmq1:rabbitmq1
+      - rabbitmq2:rabbitmq2
+      - rabbitmq3:rabbitmq3
 
 volumes:
   rabbitmq-volume:
